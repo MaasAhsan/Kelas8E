@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kelas 8E — SMP Birrul Walidain Muhammadiyah Sragen</title>
+<meta name="description" content="Website resmi Kelas 8E SMP Birrul Walidain Muhammadiyah Sragen: pengurus kelas, galeri kegiatan, dan kontak wali kelas.">
+<meta name="theme-color" content="#074C90">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Kelas 8E — SMP Birrul Walidain Muhammadiyah Sragen">
+<meta property="og:description" content="Kebersamaan, semangat belajar, dan akhlak mulia di Kelas 8E.">
+<meta property="og:image" content="https://kelas-8e.web.app/foto1.jpeg">
+<meta property="og:url" content="https://kelas-8e.web.app/">
+<link rel="icon" href="assets/img-72ceb920cb.png">
+<link rel="preload" href="fonts/unbounded-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/figtree-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="jam-hidup" id="jam-hidup" aria-label="Waktu sekarang, zona WIB">
+  <strong id="jam-waktu">--:--:--</strong>
+  <span class="zona">WIB</span>
+  <span id="jam-tanggal">Memuat tanggal…</span>
+</div>
+<div class="news-ticker" id="news-ticker" aria-label="Quick News">
+  <div class="news-track" id="news-track"></div>
+</div>
+
+<div class="owner-page" id="owner-page" data-lenis-prevent>
+  <div class="owner-top">
+    <div class="owner-top-in">
+      <div class="owner-brand"><strong>Panel Admin</strong><span>Kelas 8E</span></div>
+      <button type="button" class="btn putih owner-back" data-kembali>&larr; Kembali ke website</button>
+      <nav class="owner-nav" aria-label="Bagian admin">
+        <button type="button" class="owner-tab" data-ke="own-news">News</button>
+        <button type="button" class="owner-tab" data-ke="own-galeri">Galeri</button>
+        <button type="button" class="owner-tab" data-ke="own-wall">Wall of Fame</button>
+        <button type="button" class="owner-tab" data-ke="own-feedback">Kritik &amp; Saran</button>
+        <button type="button" class="owner-tab" data-ke="own-backup">Cadangan</button>
+      </nav>
+    </div>
+  </div>
+  <div class="owner-wrap">
+  <div class="owner-intro"><h1>Kelola Website</h1><p>Pilih bagian lewat tab di atas. Perubahan akan muncul di website setelah kamu kembali.</p></div>
+  <h2 id="own-news">Quick News</h2>
+  <p>Tambah atau hapus berita yang muncul di ticker paling atas. Data disimpan di browser ini (localStorage).</p>
+  <form class="owner-form" id="owner-form">
+    <input type="text" id="news-judul" placeholder="Judul berita" required>
+    <label style="font-weight:800">Gambar (opsional)<input type="file" id="news-img" accept="image/*" style="display:block;width:100%;margin-top:.4rem"></label>
+    <textarea id="news-isi" placeholder="Isi singkat (opsional)" rows="2"></textarea>
+    <button type="submit" class="btn">Tambah News</button>
+    <p id="news-status" role="status"></p>
+  </form>
+  <div class="owner-list" id="owner-list"></div>
+  <h2 id="own-galeri">Galeri — Momen kebersamaan</h2>
+  <p>Upload foto dari perangkatmu, beri tulisan, lalu atur urutannya. Foto otomatis diperkecil dan disimpan di browser ini. Foto bawaan di kode tetap tampil.</p>
+  <form class="owner-form" id="galeri-form">
+    <input type="file" id="gal-file" accept="image/*" required>
+    <input type="text" id="gal-cap" placeholder="Tulisan / caption foto" required maxlength="80">
+    <input type="text" id="gal-alt" placeholder="Deskripsi foto untuk pembaca layar (opsional)" maxlength="140">
+    <select id="gal-rasio"><option value="">Bentuk kartu: Landscape 4:3 (default)</option><option value="1/1">Bentuk kartu: Persegi 1:1</option><option value="3/4">Bentuk kartu: Potret 3:4</option></select>
+    <button type="submit" class="btn">Tambah Foto</button>
+    <p id="gal-status" role="status"></p>
+  </form>
+  <div class="owner-list" id="gal-list"></div>
+  <h2 id="own-wall">Wall of Fame</h2>
+  <p>Tambah, ubah, atau hapus pencapaian yang tampil di halaman Galeri. Hanya cantumkan nama atau foto siswa jika sudah diizinkan.</p>
+  <form class="owner-form" id="wall-form">
+    <input type="hidden" id="wf-id">
+    <input type="text" id="wf-judul" placeholder="Judul pencapaian" required maxlength="120">
+    <select id="wf-kat" aria-label="Kategori pencapaian">
+      <option value="Prestasi">Prestasi</option>
+      <option value="Karya">Karya</option>
+      <option value="Lomba">Lomba</option>
+      <option value="Kegiatan">Kegiatan</option>
+      <option value="Lainnya">Lainnya</option>
+    </select>
+    <input type="text" id="wf-siswa" placeholder="Nama siswa / kelompok (opsional, hanya jika diizinkan)" maxlength="80">
+    <textarea id="wf-isi" placeholder="Deskripsi singkat" rows="3" maxlength="500"></textarea>
+    <input type="date" id="wf-tgl" aria-label="Tanggal pencapaian">
+    <label style="font-weight:800">Gambar (opsional)<input type="file" id="wf-img" accept="image/*" style="display:block;width:100%;margin-top:.4rem"></label>
+    <img id="wf-preview" class="wf-preview" alt="" hidden>
+    <input type="text" id="wf-alt" placeholder="Teks alternatif gambar (opsional)" maxlength="140">
+    <div class="aksi-kontak">
+      <button type="submit" class="btn" id="wf-simpan">Tambah pencapaian</button>
+      <button type="button" class="btn putih" id="wf-batal" hidden>Batal edit</button>
+    </div>
+    <p id="wf-status" role="status"></p>
+  </form>
+  <div class="owner-list" id="wf-list"></div>
+
+  <h2 id="own-feedback">Kritik & Saran <span class="badge" id="fb-badge" hidden></span></h2>
+  <p>Masukan pengunjung tidak ditampilkan di website publik. Data ada di tabel <code>class_feedback</code>, bukan di <code>site_data</code>. Hanya admin yang login dan terdaftar di tabel <code>admins</code> yang bisa membaca atau mengubah. Jika daftar selalu kosong, jalankan SQL lalu masukkan UUID admin.</p>
+  <div class="fb-filter">
+    <label>Kategori
+      <select id="fb-kat"><option value="">Semua</option><option value="kritik">Kritik</option><option value="saran">Saran</option><option value="apresiasi">Apresiasi</option></select>
+    </label>
+    <label>Status
+      <select id="fb-st"><option value="">Semua</option><option value="baru">Baru</option><option value="ditinjau">Ditinjau</option><option value="selesai">Selesai</option></select>
+    </label>
+    <button type="button" class="btn putih" id="fb-muat">Muat ulang</button>
+  </div>
+  <p id="fb-status" role="status"></p>
+  <div class="owner-list" id="fb-list"></div>
+
+  <h2 id="own-backup">Cadangan & Sinkronisasi</h2>
+  <p id="bk-mode-info"></p>
+  <div class="aksi-kontak">
+    <button type="button" class="btn" id="bk-unduh">Unduh cadangan (.json)</button>
+    <label class="btn putih" style="cursor:pointer">Pulihkan dari file<input type="file" id="bk-file" accept="application/json,.json" hidden></label>
+    <select id="bk-mode" aria-label="Mode pemulihan" style="padding:.5rem;border:var(--tebal);border-radius:.6rem;font:inherit;background:var(--putih)"><option value="ganti">Ganti semua data</option><option value="gabung">Gabungkan dengan data sekarang</option></select>
+  </div>
+  <div class="aksi-kontak" id="bk-sb" hidden style="margin-top:.8rem">
+    <button type="button" class="btn putih" id="bk-sinkron">Kirim data browser ini ke Supabase</button>
+    <button type="button" class="btn putih" id="bk-keluar">Keluar</button>
+  </div>
+  <p id="bk-status" role="status"></p>
+  <p style="margin-top:2.5rem"><button type="button" class="btn putih" data-kembali>&larr; Kembali ke website</button></p>
+  </div>
+</div>
+
+<header>
+  <a class="logo-mark" href="#beranda" aria-label="Beranda Kelas 8E"><img src="assets/img-8ccd9c0d00.png" alt=""></a>
+  <nav aria-label="Menu utama"><ul>
+    <li><a href="#halaman-berita" data-route="berita">Berita</a></li>
+    <li><a href="#halaman-galeri" data-route="galeri">Galeri</a></li>
+    <li><a href="#halaman-siswa" data-route="siswa">Warga</a></li>
+    <li class="pisah"><a href="#beranda">Beranda</a></li>
+    <li><a href="#tentang">Profil</a></li>
+    <li><a href="#lab">Coding</a></li>
+    <li><a href="#struktur">Pengurus</a></li>
+    <li data-bagian="pengumuman" hidden><a href="#pengumuman">Pengumuman</a></li>
+    <li data-bagian="jadwal" hidden><a href="#jadwal">Jadwal</a></li>
+    <li><a href="#kontak">Hubungi</a></li>
+  </ul></nav>
+</header>
+
+<main>
+<section class="hero" id="beranda">
+  <div class="wrap">
+    <div>
+      <img class="logo-hero" src="assets/img-b7fc54f94f.png" alt="Logo Kelas 8E">
+      <span class="chip">&lt;/&gt; Kelas Informatika</span>
+      <p class="sekolah" id="sekolah">SMP Birrul Walidain Muhammadiyah Sragen</p>
+      <h1 id="nama-kelas" aria-label="Kelas 8E"><span class="huruf">8</span><span class="huruf">E</span></h1>
+      <p class="biner" id="biner" aria-hidden="true"></p>
+      <p class="lead">Kebersamaan, semangat belajar, dan kekompakan yang tumbuh setiap hari di lingkungan sekolah. Inilah wajah kelas <span class="kls">8E</span>, generasi yang siap berprestasi dengan akhlak mulia.</p>
+      <div class="aksi">
+        <a class="btn" href="#struktur">Kenali pengurus kelas</a>
+        <a class="btn putih" href="#halaman-berita" data-route="berita">Baca berita kelas</a>
+        <a class="btn putih" href="#kontak">Hubungi kami</a>
+      </div>
+    </div>
+    <div class="panggung">
+      <svg class="sun" id="sun" viewBox="-100 -100 200 200" aria-hidden="true"><g id="sinar"></g><circle class="inti" r="40"/></svg>
+      <figure class="polaroid">
+        <img src="assets/img-ca20e96d67.jpg" alt="Siswa dan wali kelas 8E berfoto bersama" fetchpriority="high" onerror="this.outerHTML='&lt;div class=&quot;bingkai&quot;&gt;&lt;/div&gt;'">
+        <p>Kelas <span class="kls">8E</span> bersama</p>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="tentang" id="tentang">
+  <div class="wrap">
+    <p class="pernyataan" id="pernyataan">Kelas 8E adalah kumpulan siswa yang aktif, kompak, dan penuh semangat. Di bawah naungan nilai Islami dan kemuhammadiyahan, kami belajar menjadi pribadi yang cerdas, mandiri, dan berakhlak baik.</p>
+    <ul class="stiker" aria-label="Yang kami jalani bersama">
+      <li>Belajar bersama</li><li>Acara kelas</li><li>Olahraga</li><li>Kegiatan keagamaan</li>
+    </ul>
+  </div>
+</section>
+
+<section class="lab playground" id="lab">
+  <div class="wrap">
+    <h2>Coding Lab Kelas <span class="kls">8E</span></h2>
+    <p class="lead">Terminal kecil + playground kode. Coba perintah di terminal, atau susun blok / tulis kode di bawah. Semuanya jalan di browsermu.</p>
+    <div class="lab-grid">
+      <div class="ter" id="ter">
+        <div class="tbar"><i></i><i></i><i></i><span>kelas-8e@coding</span></div>
+        <div class="ter-out" id="ter-out" role="log" aria-live="polite" data-lenis-prevent></div>
+        <div class="cepat" id="cepat"></div>
+        <form class="ter-form" id="ter-form"><label for="ter-in">$</label><input class="ter-in" id="ter-in" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Perintah terminal"></form>
+      </div>
+      <div class="editor"><div class="tbar">belajar.js</div><ol class="kode" id="kode"></ol></div>
+    </div>
+
+    <div class="play" style="margin-top:3.5rem">
+      <h3>Playground kode</h3>
+      <p class="lead">Mulai dengan Blok (seperti Scratch) atau tulis HTML sendiri. Ada 20 preset game siap pakai. Semua jalan di browsermu.</p>
+      <div class="tabs" role="tablist" aria-label="Mode playground">
+        <button type="button" role="tab" data-b="blok" aria-selected="true">Blok (mudah)</button>
+        <button type="button" role="tab" data-b="html" aria-selected="false">HTML + Game</button>
+      </div>
+
+      <div id="panel-blok">
+        <div class="blok">
+          <div class="bk-kerja">
+            <div class="bk-bar">
+              <button type="button" class="btn" id="bk-jalan">Jalankan</button>
+              <button type="button" class="btn putih" id="bk-stop">Hentikan</button>
+              <button type="button" class="btn putih" id="bk-contoh">Contoh bintang</button>
+              <button type="button" class="btn putih" id="bk-hapus">Hapus semua</button>
+            </div>
+            <div id="bk-ws"><p class="muat" id="bk-muat">Memuat editor blok (sekitar 1 MB, hanya sekali)...</p></div>
+          </div>
+          <div class="bk-sisi">
+            <div class="kotak-gelap">
+              <div class="tbar"><i></i><i></i><i></i><span>panggung kura-kura</span></div>
+              <div class="kanvas"><canvas id="bk-jejak" width="480" height="360"></canvas><canvas id="bk-kura" width="480" height="360"></canvas></div>
+              <label class="kontrol">Kecepatan <input type="range" id="bk-kec" min="1" max="10" value="4" title="Geser untuk mengatur seberapa cepat kura-kura bergerak"></label>
+            </div>
+            <div class="kotak-gelap">
+              <div class="tbar"><span>kode yang dihasilkan</span><span class="geser"><button type="button" data-k="js" aria-pressed="true">JavaScript</button><button type="button" id="bk-salin">Salin</button></span></div>
+              <pre id="bk-kode"></pre>
+            </div>
+            <div class="kotak-gelap">
+              <div class="tbar"><i></i><i></i><i></i><span>hasil cetak</span></div>
+              <pre id="bk-hasil" aria-live="polite"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="panel-teks" hidden>
+        <div class="preset-bar">
+          <label>Preset game: <select id="preset-select" aria-label="Pilih preset game HTML"><option value="">-- pilih atau tulis sendiri --</option></select></label>
+          <button type="button" class="btn putih" id="asisten-toggle">Asisten kode</button>
+        </div>
+        <div class="pg">
+          <div class="pg-kode">
+            <div class="tbar"><i></i><i></i><i></i><span id="pg-nama">index.html</span></div>
+            <div class="asisten">
+              <textarea id="pg-kode" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Editor kode" placeholder="Tulis HTML di sini. Ketik untuk lihat saran. Ctrl+Enter untuk jalankan."></textarea>
+              <div class="saran" id="saran" role="listbox" aria-label="Saran kode"></div>
+            </div>
+            <div class="pg-aksi">
+              <button type="button" class="btn" id="pg-jalan">Jalankan</button>
+              <button type="button" class="btn putih" id="pg-clear">Bersihkan</button>
+              <button type="button" class="btn putih" id="pg-tab">Buka di tab baru</button>
+              <small>Ctrl + Enter</small>
+            </div>
+          </div>
+          <div class="pg-hasil">
+            <div class="tbar"><i></i><i></i><i></i><span>hasil pratinjau · v7</span></div>
+            <pre id="pg-out" aria-live="polite" hidden></pre>
+            <iframe id="pg-frame" hidden sandbox="allow-scripts allow-modals" title="Pratinjau HTML"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="struktur" id="struktur">
+  <div class="wrap">
+    <h2>Pengurus Kelas <span class="kls">8E</span></h2>
+    <p class="lead">Mereka yang dipercaya menjaga kekompakan, ketertiban, dan kelancaran kegiatan kelas sepanjang tahun ajaran <span class="ta">2025/2026</span>.</p>
+    <div class="rak" id="pembina"></div>
+    <p class="baris">Pengurus siswa</p>
+    <div class="rak" id="pengurus"></div>
+  </div>
+</section>
+
+<section id="pengumuman" hidden>
+  <div class="wrap"><h2>Pengumuman</h2><ul class="daftar" id="daftar-pengumuman"></ul></div>
+</section>
+
+<section id="jadwal" hidden>
+  <div class="wrap">
+    <h2>Jadwal kelas</h2>
+    <div id="blok-pelajaran" hidden><h3 class="sub">Jadwal pelajaran</h3><div class="tabel"><table><tbody id="tabel-pelajaran"></tbody></table></div></div>
+    <div id="blok-piket" hidden><h3 class="sub">Jadwal piket</h3><div class="tabel"><table><tbody id="tabel-piket"></tbody></table></div></div>
+  </div>
+</section>
+
+<section class="galeri" id="galeri">
+  <div class="wrap"><h2>Momen kebersamaan</h2><p class="lead">Potret kegiatan Kelas <span class="kls">8E</span>. Klik foto untuk memperbesar, atau buka halaman galeri untuk melihat semua.</p><div class="aksi"><a class="btn putih" href="#halaman-galeri" data-route="galeri">Lihat semua galeri</a></div></div>
+  <div class="jalur" id="jalur"></div>
+</section>
+
+<section class="kontak" id="kontak">
+  <div class="wrap">
+    <h2>Hubungi & Saran</h2>
+    <p class="lead">Ada pertanyaan, atau ingin menyampaikan masukan? Hubungi wali kelas, atau kirim kritik dan saran di bawah. Masukan hanya dibaca admin.</p>
+    <div class="kotak" id="kotak-kontak"></div>
+    <div class="ks-dalam" id="kritik">
+      <h3>Kritik & Saran</h3>
+      <p class="lead">Kirim kritik, saran, atau apresiasi. Tidak ditampilkan di website.</p>
+      <form class="ks-form" id="ks-form" novalidate>
+        <label for="ks-kat">Kategori
+          <select id="ks-kat" required>
+            <option value="saran">Saran</option>
+            <option value="kritik">Kritik</option>
+            <option value="apresiasi">Apresiasi</option>
+          </select>
+        </label>
+        <label for="ks-pesan">Pesan
+          <textarea id="ks-pesan" maxlength="800" required placeholder="Tulis masukan yang jelas dan sopan (minimal 10 karakter)."></textarea>
+        </label>
+        <div class="ks-baris">
+          <label class="ks-cek" for="ks-anon"><input type="checkbox" id="ks-anon" checked> Kirim tanpa nama</label>
+          <span class="ks-hitung" id="ks-hitung" aria-live="polite">0 / 800</span>
+        </div>
+        <label for="ks-nama">Nama tampilan <span style="font-weight:600;color:var(--redup)">(opsional)</span>
+          <input type="text" id="ks-nama" maxlength="60" placeholder="Kosongkan jika ingin anonim" autocomplete="nickname" disabled>
+        </label>
+        <p class="ks-note">Jangan tulis data pribadi yang tidak perlu, seperti nomor HP, alamat, atau kata sandi.</p>
+        <div class="aksi" style="margin-top:.4rem">
+          <button type="submit" class="btn" id="ks-kirim">Kirim masukan</button>
+        </div>
+        <p id="ks-status" role="status"></p>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<div id="tirai" aria-hidden="true"><span id="tirai-label"></span></div>
+
+<div id="berita-page" aria-label="Halaman Berita">
+  <section class="hero b-hero">
+    <div class="wrap">
+      <div>
+        <span class="chip">&lt;/&gt; Berita Kelas</span>
+        <h1 class="b-judul" id="b-judul" tabindex="-1"></h1>
+        <p class="lead">Kabar terbaru, kegiatan, dan momen kebersamaan Kelas <span class="kls">8E</span>.</p>
+        <div class="aksi"><a class="btn putih" href="#beranda">&larr; Kembali ke beranda</a></div>
+      </div>
+      <div class="panggung">
+        <svg class="sun" id="b-sun" viewBox="-100 -100 200 200" aria-hidden="true"><g id="b-putar"></g><circle class="inti" r="40"/></svg>
+      </div>
+    </div>
+  </section>
+  <section class="b-isi">
+    <div class="wrap">
+      <div class="b-bar">
+        <label for="b-cari">Cari berita</label>
+        <input type="search" id="b-cari" placeholder="Ketik judul atau isi..." autocomplete="off">
+        <small id="b-hitung" aria-live="polite"></small>
+      </div>
+      <div class="b-grid" id="b-grid"></div>
+    </div>
+  </section>
+</div>
+
+<div id="galeri-page" aria-label="Halaman Galeri">
+  <section class="hero b-hero g-hero">
+    <div class="wrap">
+      <div>
+        <span class="chip"></> Galeri Kelas</span>
+        <h1 class="b-judul" id="g-judul" tabindex="-1"></h1>
+        <p class="lead">Potret kegiatan dan kebersamaan Kelas <span class="kls">8E</span>. Cari foto, klik untuk memperbesar, lalu lihat Wall of Fame di bawah.</p>
+        <div class="aksi"><a class="btn putih" href="#beranda">&larr; Kembali ke beranda</a></div>
+      </div>
+      <div class="panggung">
+        <svg class="sun" id="g-sun" viewBox="-100 -100 200 200" aria-hidden="true"><g id="g-putar"></g><circle class="inti" r="40"/></svg>
+      </div>
+    </div>
+  </section>
+  <section class="b-isi">
+    <div class="wrap">
+      <div class="b-bar">
+        <label for="g-cari">Cari foto</label>
+        <input type="search" id="g-cari" placeholder="Ketik keterangan foto..." autocomplete="off">
+        <small id="g-hitung" aria-live="polite"></small>
+      </div>
+      <div class="b-grid" id="g-grid"></div>
+    </div>
+  </section>
+  <section class="wall" id="wall">
+    <div class="wrap">
+      <span class="chip gelap"></> Portofolio kelas</span>
+      <h2>Wall of Fame <span class="kls">8E</span></h2>
+      <p class="lead">Prestasi, karya, lomba, dan momen yang layak diingat. Ini portofolio kebanggaan Kelas <span class="kls">8E</span>.</p>
+      <div class="w-grid" id="w-grid"></div>
+    </div>
+  </section>
+</div>
+
+<div id="siswa-page" aria-label="Halaman Warga Kelas">
+  <section class="hero b-hero s-hero">
+    <div class="wrap">
+      <div>
+        <span class="chip"></> Warga Kelas</span>
+        <h1 class="b-judul" id="s-judul" tabindex="-1"></h1>
+        <p class="lead">Guru dan murid Kelas <span class="kls">8E</span> dalam satu tempat. Murid diurutkan sesuai nomor absen.</p>
+        <div class="aksi"><a class="btn putih" href="#beranda">&larr; Kembali ke beranda</a></div>
+      </div>
+      <div class="panggung">
+        <svg class="sun" id="s-sun" viewBox="-100 -100 200 200" aria-hidden="true"><g id="s-putar"></g><circle class="inti" r="40"/></svg>
+      </div>
+    </div>
+  </section>
+  <section class="b-isi">
+    <div class="wrap">
+      <div class="s-tabs" role="tablist" aria-label="Kategori warga kelas">
+        <button type="button" role="tab" data-k="murid" aria-selected="true">Murid <b id="st-murid"></b></button>
+        <button type="button" role="tab" data-k="guru" aria-selected="false">Guru <b id="st-guru"></b></button>
+      </div>
+      <div class="b-bar">
+        <label for="s-cari">Cari nama</label>
+        <input type="search" id="s-cari" placeholder="Ketik nama..." autocomplete="off">
+        <small id="s-hitung" aria-live="polite"></small>
+      </div>
+      <div class="siswa-grid" id="s-grid"></div>
+    </div>
+  </section>
+</div>
+
+<footer><div class="wrap">© <span id="tahun">2026</span> SMP Birrul Walidain Muhammadiyah Sragen, Kelas <span class="kls">8E</span>
+  <a href="#owner" id="owner-link">Admin</a>
+</div></footer>
+
+<dialog id="lightbox" aria-label="Foto diperbesar">
+  <button type="button" class="btn" id="tutup">Tutup</button>
+  <img alt="" id="lb-img"><p id="lb-cap"></p>
+</dialog>
+
+<script src="vendor/gsap/gsap.min.js"></script>
+<script src="vendor/gsap/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis/lenis.min.js"></script>
+<script src="vendor/supabase/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/router.js"></script>
+</body>
+</html>
