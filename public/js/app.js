@@ -1,6 +1,15 @@
 const $ = (id) => document.getElementById(id);
 const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
 
+/* Ukuran layar: HP/tablet sentuh dianggap "kecil" (hemat animasi & render) */
+const layarKecil = () => matchMedia("(max-width: 820px), (pointer: coarse)").matches;
+/* Jalankan fn hanya jika LEBAR berubah. Di HP, bilah alamat dan keyboard hanya mengubah TINGGI (event resize);
+   itu dulu memicu bangun-ulang galeri/ticker berulang kali saat scroll atau mengetik = penyebab freeze. */
+function saatLebarBerubah(fn, ms) {
+  let w = innerWidth, t = 0;
+  addEventListener("resize", () => { if (innerWidth === w) return; w = innerWidth; clearTimeout(t); t = setTimeout(fn, ms || 250); });
+}
+
 /* Teks dasar */
 document.querySelectorAll(".kls").forEach(e => e.textContent = CONFIG.KELAS);
 document.querySelectorAll(".ta").forEach(e => e.textContent = CONFIG.TAHUN_AJARAN);
@@ -81,13 +90,14 @@ function bangunGaleri() {
   });
   set(false);
   if (!data.length) return;
+  if (layarKecil()) return;                                  // HP: geser manual (swipe), tanpa klon foto & animasi otomatis yang berat
   const lebarSet = jl.scrollWidth, per = Math.max(1, Math.ceil(innerWidth / lebarSet));
   for (let k = 1; k < per * 2; k++) set(true);              // dua setengah identik -> loop mulus
   jl.style.setProperty("--dur", Math.max(25, lebarSet * per / 55) + "s");
   jl.classList.add("jalan");
 }
 bangunGaleri();
-let _glT; addEventListener("resize", () => { clearTimeout(_glT); _glT = setTimeout(bangunGaleri, 300); });
+saatLebarBerubah(bangunGaleri, 300);
 if (!GALERI.length) $("jalur").replaceWith(el("p", "kosong", "Foto kegiatan akan ditambahkan di sini."));
 $("tutup").onclick = () => lb.close();
 lb.addEventListener("click", (e) => { if (e.target === lb) lb.close(); });
@@ -693,7 +703,7 @@ function renderTicker() {
   track.style.setProperty("--dur", Math.max(15, (setW * per) / 70) + "s");
   track.style.animation = "";
 }
-let _tkT; addEventListener("resize", () => { clearTimeout(_tkT); _tkT = setTimeout(renderTicker, 250); });
+saatLebarBerubah(renderTicker, 250);
 
 function renderOwner() {
   const list = $("owner-list");
@@ -1214,6 +1224,7 @@ function initFeedback() {
 /* ============ Animasi (GSAP + ScrollTrigger + Lenis) ============ */
 if (window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });        // bilah alamat HP naik/turun tidak memicu refresh berulang
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
@@ -1245,7 +1256,7 @@ if (window.gsap && window.ScrollTrigger) {
       opacity: 0, y: 30, duration: 0.9, delay: 0.45, stagger: 0.1, ease: "power3.out"
     });
     // secondary float on logo
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches && !layarKecil()) {
       gsap.to(".logo-hero", { y: -6, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 1.2 });
       gsap.to(".polaroid", { rotation: "+=2", duration: 4, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 0.8 });
     }
@@ -1283,7 +1294,7 @@ if (window.gsap && window.ScrollTrigger) {
       scrollTrigger: { trigger: ".stiker", start: "top 85%" }
     });
     // continuous subtle wiggle on stickers
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches && !layarKecil()) {
       gsap.to(".stiker li", { rotation: "+=3", duration: 3.5, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.3, delay: 1 });
     }
 
@@ -1314,7 +1325,7 @@ if (window.gsap && window.ScrollTrigger) {
       scrollTrigger: { trigger: "#kontak", start: "top 80%" }
     });
     // subtle lift on contact cards
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches && !layarKecil()) {
       gsap.to(".kotak > div", { y: -4, duration: 2.8, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.4 });
     }
 
@@ -1324,5 +1335,4 @@ if (window.gsap && window.ScrollTrigger) {
 
   /* Refresh ulang saat resize / gambar selesai */
   window.addEventListener("load", () => ScrollTrigger.refresh());
-  window.addEventListener("resize", () => ScrollTrigger.refresh());
 }

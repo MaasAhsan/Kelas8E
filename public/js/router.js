@@ -117,7 +117,7 @@
   }
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") tutupSiswa(); });
   window.addEventListener("hashchange", tutupSiswa);
-  window.addEventListener("resize", tutupSiswa);
+  { let w0 = innerWidth; addEventListener("resize", () => { if (innerWidth !== w0) { w0 = innerWidth; tutupSiswa(); } }); }   // abaikan resize karena bilah alamat/keyboard HP
 
   let kat = "murid";
   function ubahKat(k) { kat = k; document.querySelectorAll(".s-tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.k === k))); }
@@ -324,13 +324,17 @@
       if (a.dataset.route === want) a.setAttribute("aria-current", "page");
       else a.removeAttribute("aria-current");
     });
+    const cur = document.querySelector("nav a[aria-current=page]"), nv = document.querySelector("header nav");   // di HP menu bisa digeser: bawa tombol aktif ke tengah
+    if (cur && nv && nv.scrollWidth > nv.clientWidth + 2) nv.scrollTo({ left: cur.getBoundingClientRect().left - nv.getBoundingClientRect().left + nv.scrollLeft - (nv.clientWidth - cur.offsetWidth) / 2, behavior: "smooth" });
   }
   const lanjut = (want) => want === "home" ? masukHome() : masukPage(want);
   const label = (want) => want === "berita" ? "Berita Kelas " + CONFIG.KELAS : want === "galeri" ? "Galeri Kelas " + CONFIG.KELAS : want === "siswa" ? "Warga Kelas " + CONFIG.KELAS : "Beranda";
 
+  let jagaTirai = 0;
+  const aman = (fn) => { try { fn(); } catch (e) { console.error(e); } };   // error di satu langkah tidak boleh membuat animasi macet
   function pindah(want, instan) {
     if (tl) {
-      tl.kill(); tl = null; tirai.classList.remove("on");
+      clearTimeout(jagaTirai); tl.kill(); tl = null; tirai.classList.remove("on");
       if (mode !== want) terapkan(want);
       lanjut(want); return;
     }
@@ -338,11 +342,18 @@
     if (instan || !gerak()) { terapkan(want); lanjut(want); return; }
     $("tirai-label").textContent = label(want);
     tirai.classList.add("on");
-    tl = gsap.timeline({ onComplete: () => { tirai.classList.remove("on"); tl = null; } });
+    clearTimeout(jagaTirai);
+    // jaring pengaman: apa pun yang terjadi, tirai tidak boleh menutupi layar lebih dari 4 detik
+    jagaTirai = setTimeout(() => {
+      if (tl) { tl.kill(); tl = null; }
+      tirai.classList.remove("on"); gsap.set(tirai, { clearProps: "transform" });
+      if (mode !== want) { aman(() => terapkan(want)); aman(() => lanjut(want)); }
+    }, 4000);
+    tl = gsap.timeline({ onComplete: () => { clearTimeout(jagaTirai); tirai.classList.remove("on"); tl = null; } });
     tl.fromTo(tirai, { yPercent: 100 }, { yPercent: 0, duration: 0.55, ease: "power3.inOut" })
-      .add(() => terapkan(want))
+      .add(() => aman(() => terapkan(want)))
       .to(tirai, { yPercent: -100, duration: 0.55, ease: "power3.inOut" }, "+=0.15")
-      .add(() => lanjut(want), "-=0.3");
+      .add(() => aman(() => lanjut(want)), "-=0.3");
   }
 
   function sinkron(instan) {
@@ -416,9 +427,10 @@
   };
   bentuk(); st.v = hitung(); tulis();
   new ResizeObserver(() => { bentuk(); perbarui(); }).observe(hd);
-  let lr = "";                                              // halo ikut posisi pill walau pill bergerak (animasi/transform/font)
-  const ikut = () => { const r = hd.getBoundingClientRect(), k = r.left + "|" + r.top + "|" + r.width + "|" + r.height; if (k !== lr) { lr = k; bentuk(); } requestAnimationFrame(ikut); };
-  requestAnimationFrame(ikut);
+  let tj = 0;                                               // halo ikut pill lewat event (bukan loop tiap frame)
+  const jadwalBentuk = () => { cancelAnimationFrame(tj); tj = requestAnimationFrame(() => { bentuk(); perbarui(); }); };
+  addEventListener("resize", jadwalBentuk, { passive: true }); addEventListener("orientationchange", jadwalBentuk); addEventListener("load", jadwalBentuk);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(jadwalBentuk);
   new ResizeObserver(perbarui).observe(document.body);      // tinggi halaman berubah (galeri, berita, dll.)
   addEventListener("scroll", perbarui, { passive: true });
 })();
